@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des élèves</title>
+    <!-- Include Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #CBDCEB;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            background-color: white;
+        }
+
+        .search-container .list-icon,
+        .search-container .search-icon {
+            padding: 10px;
+            color: black;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .search-container .list-icon {
+            margin-left: 5px;
+            opacity: 50%;
+        }
+
+        .search-container .search-icon {
+            margin-right: 5px;
+            opacity: 50%;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: none;
+            outline: none;
+            border-radius: 50px;
+            background-color: white;
+        }
+
+        .search-bar:focus {
+            border-color: #3498db;
+        }
+
+        /* Student List */
+        .student-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-top: 30px;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 10px;
+            cursor: pointer;
+            position: relative;
+            transition: opacity 0.3s ease, transform 0.2s ease;
+            margin: 0; /* Eliminate margins between items */
+        }
+
+        .student-item:hover * {
+            color: #133E87;
+            opacity: 150%;
+            transform: translateY(-2px);
+        }
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-grow: 1;
+        }
+
+        .student-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50px;
+            object-fit: cover;
+        }
+
+        .student-info h3 {
+            font-size: 14px;
+            color: #000000;
+            font-weight: 600;
+            opacity: 70%;
+        }
+
+        .plus-icon {
+            font-size: 1.5rem;
+            color: #133E87;
+            padding: 12px;
+            transition: background-color 0.3s ease;
+        }
+
+        .plus-icon:hover {
+            background-color: #2980b9;
+        }
+
+        /* Underline below each item */
+        .student-item::after {
+            content: '';
+            display: block;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: #133E87;
+            opacity: 40%;
+        }
+
+        .student-item:hover::after {
+            background-color: #3498db;
+        }
+
+        @media (max-width: 768px) {
+            .student-item {
+                width: 100%;
+            }
+        
+            .search-container {
+                width: 100%;
+            }
+        }
+        
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Search Bar with Icons -->
+        <div class="search-container">
+            <i class="fas fa-list list-icon"></i>
+            <input type="text" id="search-bar" class="search-bar" placeholder="Rechercher un élève...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+
+        <!-- Student List -->
+        <div class="student-list" id="student-list">
+            <!-- Example Student List Items (These will be dynamically populated) -->
+        </div>
+    </div>
+
+    <script>
+        // Simulating 20 student data (Malian and Ivorian names)
+        const students = [
+            { id: 1, name: 'Amadou Diallo', profilePic: 'https://via.placeholder.com/60' },
+            { id: 2, name: 'Aminata Coulibaly', profilePic: 'https://via.placeholder.com/60' },
+            { id: 3, name: 'Moussa Traoré', profilePic: 'https://via.placeholder.com/60' },
+            { id: 4, name: 'Fatoumata Keita', profilePic: 'https://via.placeholder.com/60' },
+            { id: 5, name: 'Seydou Diarra', profilePic: 'https://via.placeholder.com/60' },
+            { id: 6, name: 'Mariama Ouattara', profilePic: 'https://via.placeholder.com/60' },
+            { id: 7, name: 'Cheick Tiébilé', profilePic: 'https://via.placeholder.com/60' },
+            { id: 8, name: 'Nafissatou Sangaré', profilePic: 'https://via.placeholder.com/60' },
+            { id: 9, name: 'Bakary Konaté', profilePic: 'https://via.placeholder.com/60' },
+            { id: 10, name: 'Oumou Sy', profilePic: 'https://via.placeholder.com/60' },
+            { id: 11, name: 'Yacouba Soro', profilePic: 'https://via.placeholder.com/60' },
+            { id: 12, name: 'Aïssatou Cissé', profilePic: 'https://via.placeholder.com/60' },
+            { id: 13, name: 'Kouadio Kouassi', profilePic: 'https://via.placeholder.com/60' },
+            { id: 14, name: 'Kadiatou Fofana', profilePic: 'https://via.placeholder.com/60' },
+            { id: 15, name: 'Samba Camara', profilePic: 'https://via.placeholder.com/60' },
+            { id: 16, name: 'Lamine Dembélé', profilePic: 'https://via.placeholder.com/60' },
+            { id: 17, name: 'Oumar Touré', profilePic: 'https://via.placeholder.com/60' },
+            { id: 18, name: 'Nabil Kone', profilePic: 'https://via.placeholder.com/60' },
+            { id: 19, name: 'Rokia Koné', profilePic: 'https://via.placeholder.com/60' },
+            { id: 20, name: 'Issa Diabaté', profilePic: 'https://via.placeholder.com/60' },
+        ];
+
+        const studentListContainer = document.getElementById('student-list');
+        const searchBar = document.getElementById('search-bar');
+
+        // Function to populate the student list
+        function populateStudentList(students) {
+            studentListContainer.innerHTML = ''; // Clear the list before repopulating
+
+            students.forEach(student => {
+                const studentItem = document.createElement('div');
+                studentItem.classList.add('student-item');
+                studentItem.dataset.id = student.id;
+
+                studentItem.innerHTML = `
+                    <div class="student-info">
+                        <img src="${student.profilePic}" alt="Profile Picture">
+                        <h3>${student.name}</h3>
+                    </div>
+                    <div class="plus-icon">+</div>
+                `;
+
+                // Add click event to navigate to the student's profile
+                studentItem.addEventListener('click', function () {
+                    window.location.href = `profile.html?id=${student.id}`;
+                });
+
+                studentListContainer.appendChild(studentItem);
+            });
+        }
+
+        // Filter the student list based on the search input
+        searchBar.addEventListener('input', function () {
+            const searchTerm = searchBar.value.toLowerCase();
+            const filteredStudents = students.filter(student => student.name.toLowerCase().includes(searchTerm));
+            populateStudentList(filteredStudents);
+        });
+
+        // Initially populate the list with all students
+        populateStudentList(students);
+    </script>
+</body>
+</html>

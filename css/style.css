@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Monoton&display=swap');
+
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Common Centered Screen Style */
+.center-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+}
+
+/* Loading Screen Styles */
+#loading-screen {
+    background: linear-gradient(to bottom, #133E87, #091F45);
+    color: #F3F3E0;
+}
+
+#loading-screen h1, 
+#loading-screen p {
+    margin-bottom: 20px;
+}
+
+#loading-screen h1 {
+    font-size: 2.5rem;
+    font-family: "Monoton", sans-serif;
+}
+
+#loading-screen p {
+    font-size: 1.5rem;
+    color: white;
+}
+
+/* Loading Bar Styles */
+#loading-bar-container {
+    width: 80%;
+    max-width: 400px;
+    background-color: #F3F3E0;
+    border-radius: 25px;
+    height: 10px;
+    margin-top: 30px;
+}
+
+#loading-bar {
+    width: 0;
+    height: 100%;
+    background-color: #3498db;
+    border-radius: 25px;
+    transition: width 0.5s ease-in-out;
+}
+
+/* Home Screen */
+#home-screen {
+    background-color: #CBDCEB;
+}
+.home {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 50%;
+}
+
+/* QR Code Container */
+.qr-code {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    width: 250px;
+    height:250px;
+}
+
+.qr-code img {
+    width: 240px;
+    height:240px;
+    border-radius: 10px;
+}
+
+/* Button Group */
+.btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    padding: 25px;
+}
+
+/* Button Styles */
+.button {
+    padding: 14px 20px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    width: 230px;
+    height: 48px;
+}
+
+.button:hover {
+    background-color: #2980b9;
+}
+
+.button:active {
+    transform: scale(0.98);
+}
+
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    p {
+        font-size: 1.2rem;
+    }
+
+    .qr-code {
+        width: 120px;
+        height: 120px;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    .login-box {
+        padding: 20px;
+    }
+}
+
