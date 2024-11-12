@@ -12,156 +12,56 @@
             justify-content: center;
             align-items: center;
             background-color: #f8f8f8;
-            font-family: 'Arial', sans-serif;
         }
 
-        .scanner-container {
-            position: absolute;
-            top: 0;
-            left: 0;
+        #qr-reader {
             width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .scan-frame {
-            position: relative;
-            width: 80%;
-            max-width: 400px;
-            height: 60%;
-            border: 2px solid rgba(255, 255, 255, 0.9);
-            border-radius: 8px;
-            box-sizing: border-box;
-            margin-bottom: 20px;
-            transition: border-color 0.3s ease;
-        }
-
-        .scan-frame.success {
-            border-color: #4CAF50;
-        }
-
-        .scan-frame.failure {
-            border-color: #f44336;
+            max-width: 600px;
+            margin: auto;
         }
 
         .scan-info {
-            position: absolute;
-            bottom: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #fff;
-            font-size: 16px;
+            margin-top: 10px;
             text-align: center;
-            background-color: rgba(0, 0, 0, 0.6);
-            padding: 8px 16px;
-            border-radius: 15px;
-            width: 80%;
-            font-weight: bold;
-        }
-
-        .scan-icon {
-            cursor: pointer;
-            background-color: transparent;
-            border: none;
-            padding: 20px;
-            border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
-        }
-
-        .scan-icon:hover {
-            transform: scale(1.1);
-        }
-
-        .scan-icon img {
-            width: 50px;
-            height: 50px;
-        }
-
-        #video-element {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
+            font-size: 18px;
+            color: #333;
         }
     </style>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 </head>
 <body>
-    <div class="scanner-container">
-        <div class="scan-frame" id="scan-frame"></div>
-        <div class="scan-info" id="scan-info">Recherche du QR Code...</div>
-        <div class="scan-icon" id="scan-icon">
-            <img width="80" height="80" src="https://img.icons8.com/officel/80/fingerprint-scan.png" alt="fingerprint-scan"/>
-        </div>
-    </div>
+    <div id="qr-reader"></div>
+    <div class="scan-info" id="scan-info">Scan en cours...</div>
 
-    <video id="video-element" autoplay></video>
-
-    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
     <script>
-        function launchCamera() {
-            const videoElement = document.getElementById('video-element');
+        document.addEventListener('DOMContentLoaded', () => {
+            const qrReader = new Html5Qrcode("qr-reader");
             const scanInfo = document.getElementById('scan-info');
-            const scanFrame = document.getElementById('scan-frame');
-            
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-                .then(function (stream) {
-                    videoElement.srcObject = stream;
-                    videoElement.play();
-                    scanInfo.textContent = 'Placez un QR code dans la zone ci-dessus';
 
-                    startScanning(videoElement, scanFrame, scanInfo);
-                })
-                .catch(function (error) {
-                    alert("Impossible d'accéder à la caméra.");
-                    console.error(error);
-                });
-        }
-
-        function startScanning(videoElement, scanFrame, scanInfo) {
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-
-            function scanFrame() {
-                if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
-                    canvas.height = videoElement.videoHeight;
-                    canvas.width = videoElement.videoWidth;
-                    context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-
-                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                    const code = jsQR(imageData.data, canvas.width, canvas.height);
-
-                    if (code) {
-                        scanFrame.classList.remove('failure');
-                        scanFrame.classList.add('success');
-                        scanInfo.textContent = 'QR Code détecté: ' + code.data;
-                        videoElement.srcObject.getTracks().forEach(track => track.stop());
-                        canvas.remove();
-                    } else {
-                        scanFrame.classList.remove('success');
-                        scanFrame.classList.add('failure');
-                        scanInfo.textContent = 'Aucun QR Code trouvé. Essayez à nouveau.';
-                    }
-                }
-                requestAnimationFrame(scanFrame);
+            function onScanSuccess(decodedText, decodedResult) {
+                scanInfo.textContent = `QR Code détecté : ${decodedText}`;
+                console.log(`QR Code détecté: ${decodedText}`);
+                qrReader.stop();
             }
 
-            scanFrame();
-        }
+            function onScanFailure(error) {
+                // Affiche des messages d'erreur intermittents
+                console.warn(`Échec de la détection du QR Code: ${error}`);
+            }
 
-        document.getElementById('scan-icon').addEventListener('click', function () {
-            launchCamera();
+            qrReader.start(
+                { facingMode: "environment" }, // Utilise la caméra arrière si possible
+                {
+                    fps: 10,
+                    qrbox: 250 // Taille de la boîte de détection
+                },
+                onScanSuccess,
+                onScanFailure
+            ).catch(err => {
+                scanInfo.textContent = 'Erreur : accès à la caméra impossible.';
+                console.error('Erreur lors du démarrage de la caméra:', err);
+            });
         });
-
-        window.onload = function() {
-            launchCamera();
-        };
     </script>
 </body>
 </html>
