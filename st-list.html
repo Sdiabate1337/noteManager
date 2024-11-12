@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des élèves</title>
-    <!-- Include Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Global Styles */
@@ -91,7 +90,7 @@
             cursor: pointer;
             position: relative;
             transition: opacity 0.3s ease, transform 0.2s ease;
-            margin: 0; /* Eliminate margins between items */
+            margin: 0;
         }
 
         .student-item:hover * {
@@ -99,6 +98,7 @@
             opacity: 150%;
             transform: translateY(-2px);
         }
+
         .student-info {
             display: flex;
             align-items: center;
@@ -131,7 +131,6 @@
             background-color: #2980b9;
         }
 
-        /* Underline below each item */
         .student-item::after {
             content: '';
             display: block;
@@ -157,57 +156,53 @@
                 width: 100%;
             }
         }
-        
-
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Search Bar with Icons -->
         <div class="search-container">
             <i class="fas fa-list list-icon"></i>
             <input type="text" id="search-bar" class="search-bar" placeholder="Rechercher un élève...">
             <i class="fas fa-search search-icon"></i>
         </div>
 
-        <!-- Student List -->
         <div class="student-list" id="student-list">
-            <!-- Example Student List Items (These will be dynamically populated) -->
         </div>
     </div>
 
     <script>
-        // Simulating 20 student data (Malian and Ivorian names)
+     // Tableau d'élèves avec le même classe et matricule
         const students = [
-            { id: 1, name: 'Amadou Diallo', profilePic: 'https://via.placeholder.com/60' },
-            { id: 2, name: 'Aminata Coulibaly', profilePic: 'https://via.placeholder.com/60' },
-            { id: 3, name: 'Moussa Traoré', profilePic: 'https://via.placeholder.com/60' },
-            { id: 4, name: 'Fatoumata Keita', profilePic: 'https://via.placeholder.com/60' },
-            { id: 5, name: 'Seydou Diarra', profilePic: 'https://via.placeholder.com/60' },
-            { id: 6, name: 'Mariama Ouattara', profilePic: 'https://via.placeholder.com/60' },
-            { id: 7, name: 'Cheick Tiébilé', profilePic: 'https://via.placeholder.com/60' },
-            { id: 8, name: 'Nafissatou Sangaré', profilePic: 'https://via.placeholder.com/60' },
-            { id: 9, name: 'Bakary Konaté', profilePic: 'https://via.placeholder.com/60' },
-            { id: 10, name: 'Oumou Sy', profilePic: 'https://via.placeholder.com/60' },
-            { id: 11, name: 'Yacouba Soro', profilePic: 'https://via.placeholder.com/60' },
-            { id: 12, name: 'Aïssatou Cissé', profilePic: 'https://via.placeholder.com/60' },
-            { id: 13, name: 'Kouadio Kouassi', profilePic: 'https://via.placeholder.com/60' },
-            { id: 14, name: 'Kadiatou Fofana', profilePic: 'https://via.placeholder.com/60' },
-            { id: 15, name: 'Samba Camara', profilePic: 'https://via.placeholder.com/60' },
-            { id: 16, name: 'Lamine Dembélé', profilePic: 'https://via.placeholder.com/60' },
-            { id: 17, name: 'Oumar Touré', profilePic: 'https://via.placeholder.com/60' },
-            { id: 18, name: 'Nabil Kone', profilePic: 'https://via.placeholder.com/60' },
-            { id: 19, name: 'Rokia Koné', profilePic: 'https://via.placeholder.com/60' },
-            { id: 20, name: 'Issa Diabaté', profilePic: 'https://via.placeholder.com/60' },
+                { id: 1, name: 'Amadou Diallo', profilePic: 'https://via.placeholder.com/60', matricule: '12345', class: '6ème A' },
+                { id: 2, name: 'Aminata Coulibaly', profilePic: 'https://via.placeholder.com/60', matricule: '12346', class: '6ème A' },
+                { id: 3, name: 'Moussa Traoré', profilePic: 'https://via.placeholder.com/60', matricule: '12347', class: '6ème A' },
+                { id: 4, name: 'Fatoumata Keita', profilePic: 'https://via.placeholder.com/60', matricule: '12348', class: '6ème A' },
+                { id: 5, name: 'Seydou Diarra', profilePic: 'https://via.placeholder.com/60', matricule: '12349', class: '6ème A' },
+                { id: 6, name: 'Mariama Ouattara', profilePic: 'https://via.placeholder.com/60', matricule: '12350', class: '6ème A' },
+                { id: 7, name: 'Cheick Tiébilé', profilePic: 'https://via.placeholder.com/60', matricule: '12351', class: '6ème A' },
+                { id: 8, name: 'Nafissatou Sangaré', profilePic: 'https://via.placeholder.com/60', matricule: '12352', class: '6ème A' },
+                { id: 9, name: 'Bakary Konaté', profilePic: 'https://via.placeholder.com/60', matricule: '12353', class: '6ème A' },
+                { id: 10, name: 'Oumou Sy', profilePic: 'https://via.placeholder.com/60', matricule: '12354', class: '6ème A' },
+                { id: 11, name: 'Yacouba Soro', profilePic: 'https://via.placeholder.com/60', matricule: '12355', class: '6ème A' },
+                { id: 12, name: 'Aïssatou Cissé', profilePic: 'https://via.placeholder.com/60', matricule: '12356', class: '6ème A' },
+                { id: 13, name: 'Kouadio Kouassi', profilePic: 'https://via.placeholder.com/60', matricule: '12357', class: '6ème A' },
+                { id: 14, name: 'Kadiatou Fofana', profilePic: 'https://via.placeholder.com/60', matricule: '12358', class: '6ème A' },
+                { id: 15, name: 'Samba Camara', profilePic: 'https://via.placeholder.com/60', matricule: '12359', class: '6ème A' },
+                { id: 16, name: 'Lamine Dembélé', profilePic: 'https://via.placeholder.com/60', matricule: '12360', class: '6ème A' },
+                { id: 17, name: 'Oumar Touré', profilePic: 'https://via.placeholder.com/60', matricule: '12361', class: '6ème A' },
+                { id: 18, name: 'Nabil Kone', profilePic: 'https://via.placeholder.com/60', matricule: '12362', class: '6ème A' },
+                { id: 19, name: 'Rokia Koné', profilePic: 'https://via.placeholder.com/60', matricule: '12363', class: '6ème A' },
+                { id: 20, name: 'Issa Diabaté', profilePic: 'https://via.placeholder.com/60', matricule: '12364', class: '6ème A' },
         ];
+
+
 
         const studentListContainer = document.getElementById('student-list');
         const searchBar = document.getElementById('search-bar');
 
-        // Function to populate the student list
+        // Populate the student list
         function populateStudentList(students) {
-            studentListContainer.innerHTML = ''; // Clear the list before repopulating
-
+            studentListContainer.innerHTML = '';
             students.forEach(student => {
                 const studentItem = document.createElement('div');
                 studentItem.classList.add('student-item');
@@ -220,24 +215,39 @@
                     </div>
                     <div class="plus-icon">+</div>
                 `;
+                
+                addOrUpdateStudent(student);
 
-                // Add click event to navigate to the student's profile
+                // Add event listener for adding to localStorage
                 studentItem.addEventListener('click', function () {
-                    window.location.href = `profile.html?id=${student.id}`;
+                    localStorage.setItem('currentStudentId', student.id);  // Store the selected student's ID in localStorage
+                    window.location.href = './profile.html';  // Redirect to the profile page
                 });
 
                 studentListContainer.appendChild(studentItem);
             });
         }
 
-        // Filter the student list based on the search input
+        // Add or Update student in localStorage
+        function addOrUpdateStudent(student) {
+            let studentsData = JSON.parse(localStorage.getItem('students')) || [];
+            let existingStudent = studentsData.find(s => s.id === student.id);
+
+            if (!existingStudent) {
+                student.notes = [];
+                studentsData.push(student);
+                localStorage.setItem('students', JSON.stringify(studentsData));
+            }
+        }
+
+        // Filter student list based on search term
         searchBar.addEventListener('input', function () {
             const searchTerm = searchBar.value.toLowerCase();
             const filteredStudents = students.filter(student => student.name.toLowerCase().includes(searchTerm));
             populateStudentList(filteredStudents);
         });
 
-        // Initially populate the list with all students
+        // Initialize with all students
         populateStudentList(students);
     </script>
 </body>
