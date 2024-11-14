@@ -122,58 +122,125 @@
 
         <div class="notes-form">
             <h4>Ajouter une note</h4>
-            <textarea id="note-text" placeholder="Entrez une note ici..."></textarea>
-            <button id="add-note">Ajouter</button>
+            <form id="note-form">
+                <select id="note-type">
+                    <option value="controle">Contrôle</option>
+                    <option value="examen">Examen</option>
+                    <option value="devoir">Devoir</option>
+                </select>
+                <input type="number" id="note-value" placeholder="Entrez la note sur 20" min="0" max="20" required>
+                <button type="submit">Ajouter</button>
+            </form>
         </div>
+        
 
         <div class="notes-list">
             <h4>Notes</h4>
-            <ul id="notes-list"></ul>
+            <div class="notes-list" id="notes-list">
+            </div>
         </div>
     </div>
 
     <script>
-        // Load the student information from localStorage
-        const studentId = localStorage.getItem('currentStudentId');
-        const studentsData = JSON.parse(localStorage.getItem('students')) || [];
-        const student = studentsData.find(s => s.id == studentId);
 
-        if (student) {
-            // Display student information
-            document.getElementById('profile-pic').src = student.profilePic;
-            document.getElementById('student-name').textContent = student.name;
-            document.getElementById('student-class').textContent = `Classe: ${student.class}`;
-            document.getElementById('student-matricule').textContent = `Matricule: ${student.matricule}`;
+        function loadStudentProfile() {
+            const studentId = localStorage.getItem('currentStudentId');
+       
+            if (!studentId) {
+                    aleert("ID not found");
+            }
+            const students = JSON.parse(localStorage.getItem('students'));
+            const studentData = students[studentId - 1];
+            console.log(studentData);
 
-            // Display the notes
-            const notesList = document.getElementById('notes-list');
-            student.notes.forEach(note => {
-                const noteItem = document.createElement('li');
-                noteItem.textContent = note;
-                notesList.appendChild(noteItem);
-            });
-
-            // Add note functionality
-            const addNoteButton = document.getElementById('add-note');
-            const noteText = document.getElementById('note-text');
-
-            addNoteButton.addEventListener('click', function() {
-                if (noteText.value.trim()) {
-                    student.notes.push(noteText.value.trim());
-                    localStorage.setItem('students', JSON.stringify(studentsData));  // Save updated student data
-                    noteText.value = '';  // Clear the text area
-
-                    // Re-render notes
-                    const newNoteItem = document.createElement('li');
-                    newNoteItem.textContent = student.notes[student.notes.length - 1];
-                    notesList.appendChild(newNoteItem);
-                } else {
-                    alert("Veuillez entrer une note.");
-                }
-            });
-        } else {
-            alert("Élève non trouvé.");
+            if (studentData) {
+                document.getElementById('student-name').textContent = studentData.name || 'Nom de l\'élève';
+                document.getElementById('student-class').textContent = `Classe: ${studentData.class || 'Classe inconnue'}`;
+                document.getElementById('student-matricule').textContent = `Matricule: ${studentData.matricule || 'Matricule inconnu'}`;
+                document.getElementById('profile-pic').src = studentData.profilePic || 'default-profile-pic.jpg';
+            }
+            else {
+                ealert("Data not fount");
+            }
         }
+
+        // je dois faire passer les notes en parametre.
+        function loadNotesFromLocalStorage() {
+            const studentId = localStorage.getItem('currentStudentId');
+            if (!studentId) {
+                alert("ID not found");
+                return; // Exit the function if the student ID is not found
+            }
+        
+            const students = JSON.parse(localStorage.getItem('students')) || [];
+            const studentData = students[studentId - 1];
+            
+            if (studentData && studentData.notes) {
+                const notes = studentData.notes;
+                console.log(notes);
+                const noteList = document.getElementById('notes-list');
+                noteList.innerHTML = ''; // Clear existing notes
+        
+                notes.forEach((note, index) => {
+                    const noteItem = document.createElement('div');
+                    noteItem.classList.add('note-item');
+        
+                    // Correctly set the inner HTML content
+                    noteItem.innerHTML = `
+                        <div class="note-info">
+                            Note ${note.type + 1}: ${note.value}/20
+                        </div>
+                        <div class="plus-icon">+</div>
+                    `;
+        
+                    // Append the note item to the note list
+                    noteList.appendChild(noteItem);
+                });
+            } else {
+                alert('No notes found for this student.');
+            }
+        }
+
+    document.getElementById('note-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const studentId = localStorage.getItem('currentStudentId'); // Get the current student ID
+        if (!studentId) {
+            alert('No student ID found. Please set the current student ID.');
+            return;
+        }
+
+        const students = JSON.parse(localStorage.getItem('students')) || [];
+        const studentIndex = students.findIndex(student => student.id === parseInt(studentId));
+        console.log(studentIndex);
+        if (studentIndex === -1) {
+            alert('Student not found in the records.');
+            return;
+        }
+
+        const noteType = document.getElementById('note-type').value;
+        const noteValue = document.getElementById('note-value').value;
+
+        if (noteValue !== "") {
+            const newNote = { type: noteType, value: noteValue };
+
+            // Add the new note to the student's notes array
+            students[studentIndex].notes = students[studentIndex].notes || [];
+            students[studentIndex].notes.push(newNote);
+            
+            document.getElementById('note-form').reset();
+            loadNotesFromLocalStorage();
+        } else {
+            alert('Veuillez entrer une valeur valide.');
+        }
+    });
+
+       
+
+       window.onload = function() {
+            loadStudentProfile();
+            loadNotesFromLocalStorage();
+       }
     </script>
 </body>
 </html>
