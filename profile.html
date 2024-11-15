@@ -16,12 +16,6 @@
         }
 
         .container {
-            max-width: 1000px;
-            margin: 40px auto;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 30px;
@@ -29,9 +23,13 @@
 
         .profile-info {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
             text-align: center;
+            justify-content: center;
+            background-color: #608BC1;
+            border-radius: 0 0 50px 50px;
+            height: 250px;
         }
 
         #profile-pic {
@@ -42,8 +40,13 @@
             margin-bottom: 20px;
         }
 
+        .profile-details {
+          text-align: left;
+          padding-left: 15px;
+        }
+
         #student-name {
-            font-size: 24px;
+            font-size: 25px;
             font-weight: bold;
             margin: 0;
         }
@@ -54,38 +57,66 @@
             margin: 5px 0;
         }
 
-        .notes-form, .notes-list {
-            background-color: #fafafa;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
         }
 
-        .notes-form h4, .notes-list h4 {
+        #notes-form {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 300px;
+            height: 300px;
+        }
+
+        #notes-form h4, .notes-list h4 {
             margin-bottom: 10px;
             font-size: 20px;
             font-weight: bold;
         }
 
-        textarea {
+        #note-form {
+            display: flex;
+            flex-direction: column;
+            justify-content: centser;
+            text-align: center;
+            gap: 15px;
+        }
+        
+        select, input[type="number"], button {
             width: 100%;
-            height: 100px;
             padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            resize: vertical;
             margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
             box-sizing: border-box;
         }
 
+        select {
+            background-color: #f9f9f9;
+        }
+
+        input[type="number"]::placeholder {
+            color: #999;
+        }
+
         button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            font-size: 16px;
+            background-color: #608BC1;
+            color: #fff;
+            font-weight: bold;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
@@ -94,19 +125,66 @@
             background-color: #45a049;
         }
 
-        .notes-list ul {
-            list-style-type: none;
-            padding: 0;
+        .note-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-top: 30px;
+        }
+
+        .note-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 10px;
+            cursor: pointer;
+            position: relative;
+            transition: opacity 0.3s ease, transform 0.2s ease;
             margin: 0;
         }
 
-        .notes-list li {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
+        .note-item:hover * {
+            color: #133E87;
+            opacity: 150%;
+            transform: translateY(-2px);
         }
 
-        .notes-list li:last-child {
+        .note-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-grow: 1;
+        }
+
+        .note-list li:last-child {
             border-bottom: none;
+        }
+
+        .plus-icon {
+            font-size: 1.5rem;
+            color: #133E87;
+            padding: 12px;
+            transition: background-color 0.3s ease;
+        }
+
+        .plus-icon:hover {
+            background-color: #2980b9;
+        }
+
+        .note-item::after {
+            content: '';
+            display: block;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: #133E87;
+            opacity: 40%;
+        }
+
+        .note-item:hover::after {
+            background-color: #3498db;
         }
 
     </style>
@@ -115,12 +193,15 @@
     <div class="container">
         <div class="profile-info">
             <img id="profile-pic" src="" alt="Profile Picture">
-            <h3 id="student-name"></h3>
-            <p id="student-class"></p>
-            <p id="student-matricule"></p>
+            <div class="profile-details">
+                <h3 id="student-name"></h3>
+                <p id="student-class"></p>
+                <p id="student-matricule"></p>
+            </div>
         </div>
 
-        <div class="notes-form">
+        <div id="overlay"></div>
+        <div id="notes-form">
             <h4>Ajouter une note</h4>
             <form id="note-form">
                 <select id="note-type">
@@ -143,15 +224,19 @@
 
     <script>
 
-        function loadStudentProfile() {
-            const studentId = localStorage.getItem('currentStudentId');
+        const studentId = localStorage.getItem('currentStudentId') ;
        
-            if (!studentId) {
-                    aleert("ID not found");
-            }
-            const students = JSON.parse(localStorage.getItem('students'));
-            const studentData = students[studentId - 1];
-            console.log(studentData);
+        if (!studentId) {
+            aleert("ID not found");
+        }
+        console.log(studentId);
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+        console.log(students);
+        let studentData = students[studentId - 1];
+
+        //console.log(students);
+
+        function loadStudentProfile(studentData) {
 
             if (studentData) {
                 document.getElementById('student-name').textContent = studentData.name || 'Nom de l\'élève';
@@ -160,24 +245,19 @@
                 document.getElementById('profile-pic').src = studentData.profilePic || 'default-profile-pic.jpg';
             }
             else {
-                ealert("Data not fount");
+                alert("Data not fount");
             }
         }
 
-        // je dois faire passer les notes en parametre.
-        function loadNotesFromLocalStorage() {
-            const studentId = localStorage.getItem('currentStudentId');
-            if (!studentId) {
-                alert("ID not found");
-                return; // Exit the function if the student ID is not found
-            }
         
-            const students = JSON.parse(localStorage.getItem('students')) || [];
-            const studentData = students[studentId - 1];
+            // je dois faire passer les notes en parametre.
+        function loadNotesFromLocalStorage(studentData) {
+
+            console.log(studentData.notes);
             
             if (studentData && studentData.notes) {
                 const notes = studentData.notes;
-                console.log(notes);
+                //console.log(notes);
                 const noteList = document.getElementById('notes-list');
                 noteList.innerHTML = ''; // Clear existing notes
         
@@ -204,15 +284,8 @@
     document.getElementById('note-form').addEventListener('submit', function(event) {
         event.preventDefault();
 
-        const studentId = localStorage.getItem('currentStudentId'); // Get the current student ID
-        if (!studentId) {
-            alert('No student ID found. Please set the current student ID.');
-            return;
-        }
-
-        const students = JSON.parse(localStorage.getItem('students')) || [];
         const studentIndex = students.findIndex(student => student.id === parseInt(studentId));
-        console.log(studentIndex);
+        //console.log(studentIndex);
         if (studentIndex === -1) {
             alert('Student not found in the records.');
             return;
@@ -224,22 +297,25 @@
         if (noteValue !== "") {
             const newNote = { type: noteType, value: noteValue };
 
+            //console.log(newNote);
             // Add the new note to the student's notes array
             students[studentIndex].notes = students[studentIndex].notes || [];
             students[studentIndex].notes.push(newNote);
-            
+
             document.getElementById('note-form').reset();
-            loadNotesFromLocalStorage();
+            loadNotesFromLocalStorage(studentData);
+            //localStorage.setItem('students', students);
+            document.getElementById('notes-form').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
         } else {
             alert('Veuillez entrer une valeur valide.');
         }
     });
-
        
 
        window.onload = function() {
-            loadStudentProfile();
-            loadNotesFromLocalStorage();
+            loadStudentProfile(studentData);
+            loadNotesFromLocalStorage(studentData);
        }
     </script>
 </body>

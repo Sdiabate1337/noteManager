@@ -201,9 +201,9 @@
         const searchBar = document.getElementById('search-bar');
 
         // Populate the student list
-        function populateStudentList(students) {
+        function populateStudentList(student) {
             studentListContainer.innerHTML = '';
-            students.forEach(student => {
+            student.forEach(student => {
                 const studentItem = document.createElement('div');
                 studentItem.classList.add('student-item');
                 studentItem.dataset.id = student.id;
@@ -215,7 +215,7 @@
                     </div>
                     <div class="plus-icon">+</div>
                 `;
-                
+                //console.log(students);
                 addOrUpdateStudent(student);
 
                 // Add event listener for adding to localStorage
