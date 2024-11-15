@@ -303,6 +303,7 @@
             students[studentIndex].notes.push(newNote);
 
             document.getElementById('note-form').reset();
+            localStorage.setItem('students', JSON.stringify(students));
             loadNotesFromLocalStorage(studentData);
             //localStorage.setItem('students', students);
             document.getElementById('notes-form').style.display = 'none';
